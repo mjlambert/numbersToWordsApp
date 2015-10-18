@@ -5,7 +5,7 @@ namespace numbersToWordsApp
 {
 
     /// <summary>
-    /// Summary description for NumberFormatter
+    /// A utility class used to format numbers in various ways.
     /// </summary>
     public static class NumberFormatter
     {
@@ -56,6 +56,11 @@ namespace numbersToWordsApp
             { '9', "NINETY" },
         };
 
+        /// <summary>
+        /// Converts a number into words.
+        /// </summary>
+        /// <param name="number">Number to convert.</param>
+        /// <returns>A string representing the number in words.</returns>
         public static string convertNumberToWords(decimal number)
         {
             string numberInWords = "";
@@ -77,11 +82,20 @@ namespace numbersToWordsApp
             return numberInWords;
         }
 
+        // Splits a decimal number into its integer and fractional parts
+        // and returns the result in an array. The integer part being in
+        // index 0 and the fractional part in index 1.
+        // Will pad to two decimal places, so there will always be an integer
+        // and a fractional part.
         private static String[] splitIntegerAndFractionalAsString(decimal number)
         {
             return number.ToString("0.00").Split('.');
         }
 
+        // Takes an integer as a string and converts it into its
+        // equivalent in words.
+        // This method relies on external constants for digit mapping,
+        // digit column indexes, and maximum supported digits.
         private static string convertStringIntegerToWords(string integer)
         {
             List<string> words = new List<string>();
@@ -137,6 +151,8 @@ namespace numbersToWordsApp
             return integerInWords;
         }
 
+        // Checks to see if the specified column (index in string) exists
+        // in the provided string.
         private static bool columnExists(string integer, int column)
         {
             if (column < integer.Length)
@@ -149,9 +165,11 @@ namespace numbersToWordsApp
             }
         }
 
-        private static bool isSignificantDigit(string reversedInteger, int column)
+        // Checks to see if the digit at the specified column (index in string) is
+        // significant. eg. 0 is insignificant.
+        private static bool isSignificantDigit(string integer, int column)
         {
-            if (columnExists(reversedInteger, column) && reversedInteger[column] != '0')
+            if (columnExists(integer, column) && integer[column] != '0')
             {
                 return true;
             }
@@ -161,6 +179,12 @@ namespace numbersToWordsApp
             }
         }
 
+        // Checks to see if the digit at the specified column (index in string) is
+        // the last significant digit in the integer.
+        // eg. the '1' in '100' is the last significant digit becasue the remaining
+        // digits are all zeroes.
+        // This method relies on being passed a reversed integer string because it
+        // makes things easier in the context the method is used.
         private static bool isLastSignificantDigit(string reversedInteger, int column)
         {
             for (int columnToCheck = column - 1; columnToCheck >= 0; columnToCheck--)
