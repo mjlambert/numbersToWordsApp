@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "numbersToWordsApp", "numbersToWordsApp\numbersToWordsApp.csproj", "{35BA99CD-FA57-4D9C-84F5-8A3F8A7D5DA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "numbersToWordsApp.Tests", "numbersToWordsApp.Tests\numbersToWordsApp.Tests.csproj", "{E45E29E6-A710-40A6-BCB1-C238072EA8B4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{35BA99CD-FA57-4D9C-84F5-8A3F8A7D5DA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35BA99CD-FA57-4D9C-84F5-8A3F8A7D5DA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35BA99CD-FA57-4D9C-84F5-8A3F8A7D5DA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35BA99CD-FA57-4D9C-84F5-8A3F8A7D5DA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E45E29E6-A710-40A6-BCB1-C238072EA8B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E45E29E6-A710-40A6-BCB1-C238072EA8B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E45E29E6-A710-40A6-BCB1-C238072EA8B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E45E29E6-A710-40A6-BCB1-C238072EA8B4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
