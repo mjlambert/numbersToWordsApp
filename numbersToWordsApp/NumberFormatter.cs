@@ -108,7 +108,7 @@ namespace numbersToWordsApp
             if (digits > MAX_SUPPORTED_DIGITS)
             {
                 throw new UnsupportedNumberOfDigitsException("This class currently"
-                    + "only supports numbers up to 999.99");
+                    + " only supports numbers up to 999.99");
             }
 
             if (isSignificantDigit(reversedInteger, HUNDREDS_COLUMN))

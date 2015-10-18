@@ -1,0 +1,17 @@
+﻿div.container {
+    padding: 20px;
+    margin-top: 50px;
+}
+
+div.center-block {
+    margin: 0 auto;
+}
+
+div.result-text {
+    border: solid;
+    border-radius: 5px;
+    border-color: #B9B9B9;
+    border-width: 1px;
+    margin-top: 10px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}

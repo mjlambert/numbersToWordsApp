@@ -13,13 +13,13 @@ namespace numbersToWordsApp {
     public partial class Default {
         
         /// <summary>
-        /// numbersToWordsForm control.
+        /// Form1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm numbersToWordsForm;
+        protected global::System.Web.UI.HtmlControls.HtmlForm Form1;
         
         /// <summary>
         /// numberInput control.
@@ -31,13 +31,13 @@ namespace numbersToWordsApp {
         protected global::System.Web.UI.WebControls.TextBox numberInput;
         
         /// <summary>
-        /// submitNumber control.
+        /// Button1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button submitNumber;
+        protected global::System.Web.UI.WebControls.Button Button1;
         
         /// <summary>
         /// numberInWords control.
