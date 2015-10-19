@@ -22,11 +22,11 @@ namespace numbersToWordsApp
             }
             catch (FormatException exception)
             {
-                numberInWords.Text = exception.Message;
+                numberInWords.Text = "Could not convert. Number is not is correct format.";
             }
             catch (UnsupportedNumberOfDigitsException exception)
             {
-                numberInWords.Text = exception.Message; // TODO have a separate label for errors
+                numberInWords.Text = exception.Message;
             }
         }
     }
