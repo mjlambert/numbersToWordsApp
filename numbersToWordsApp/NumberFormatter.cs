@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace numbersToWordsApp
 {
 
     /// <summary>
-    /// A utility class used to format numbers in various ways.
+    /// A utility class used to format numbers into words.
     /// </summary>
-    public static class NumberFormatter
+    public static class NumberToWordsFormatter
     {
-        private const int MAX_SUPPORTED_DIGITS = 3;
+        // Support numbers up to 999 Septillion
+        private const int MAX_SUPPORTED_DIGITS = 27;
 
-        private const int ONES_COLUMN = 0;
-        private const int TENS_COLUMN = 1;
-        private const int HUNDREDS_COLUMN = 2;
+        private const string CURRENCY_WHOLE = "DOLLAR";
+        private const string CURRENCY_FRACTIONAL = "CENT";
 
         private static readonly Dictionary<char, string> ONES_MAP = new Dictionary<char, string>
         {
@@ -26,7 +27,7 @@ namespace numbersToWordsApp
             { '6', "SIX" },
             { '7', "SEVEN" },
             { '8', "EIGHT" },
-            { '9', "NINE" }
+            { '9', "NINE" },
         };
 
         private static readonly Dictionary<char, string> TEENS_MAP = new Dictionary<char, string>
@@ -56,29 +57,65 @@ namespace numbersToWordsApp
             { '9', "NINETY" },
         };
 
+        private static readonly Dictionary<int, string> PERIOD_MAP = new Dictionary<int, string>
+        {
+            { 2, "THOUSAND" },
+            { 3, "MILLION" },
+            { 4, "BILLION" },
+            { 5, "TRILLION" },
+            { 6, "QUADRILLION" },
+            { 7, "QUINTILLION" },
+            { 8, "SEXTILLION" },
+            { 9, "SEPTILLION" },
+        };
+
         /// <summary>
-        /// Converts a number into words.
+        /// Converts a number into words using short scale.
         /// </summary>
         /// <param name="number">Number to convert.</param>
         /// <returns>A string representing the number in words.</returns>
         public static string convertNumberToWords(decimal number)
         {
-            string numberInWords = "";
+            List<string> words = new List<string>();
 
             if (number < 0)
             {
-                numberInWords += "NEGATIVE ";
+                words.Add("NEGATIVE");
             }
 
             String[] integerAndFractionalParts = splitIntegerAndFractionalAsString(Math.Abs(number));
             string integerPart = integerAndFractionalParts[0];
             string fractionalPart = integerAndFractionalParts[1];
 
-            numberInWords += convertStringIntegerToWords(integerPart);
-            numberInWords += " DOLLARS AND ";
-            numberInWords += convertStringIntegerToWords(fractionalPart);
-            numberInWords += " CENTS";
+            Stack<string> integerPartPeriods = splitIntegerIntoPeriods(integerPart);
+            Stack<string> fractionalPartPeriods = splitIntegerIntoPeriods(fractionalPart);
 
+            // Convert integer part of number
+            words.AddRange(convertPeriodsIntoWords(integerPartPeriods));
+
+            if (words.Count < 3 && words.Last() == "ONE")
+            {
+                words.Add(CURRENCY_WHOLE);
+            }
+            else
+            {
+                words.Add(CURRENCY_WHOLE + 'S');
+            }
+            words.Add("AND");
+
+            // Convert fractional part of number
+            words.AddRange(convertPeriodsIntoWords(fractionalPartPeriods));
+
+            if (words.Last() == "ONE")
+            {
+                words.Add(CURRENCY_FRACTIONAL);
+            }
+            else
+            {
+                words.Add(CURRENCY_FRACTIONAL + 'S');
+            }
+
+            string numberInWords = string.Join(" ", words);
             return numberInWords;
         }
 
@@ -92,54 +129,68 @@ namespace numbersToWordsApp
             return number.ToString("0.00").Split('.');
         }
 
-        // Takes an integer as a string and converts it into its
-        // equivalent in words.
-        // This method relies on external constants for digit mapping,
-        // digit column indexes, and maximum supported digits.
-        private static string convertStringIntegerToWords(string integer)
+        // Takes an integer as a string and splits it into periods.
+        // A period in this context is the group of three digits in
+        // between the commas in large numbers.
+        // All periods will be padded to three digits.
+        // eg. 12589123 will be split into 012, 589, 123.
+        private static Stack<string> splitIntegerIntoPeriods(string integer)
+        {
+            Stack<string> periods = new Stack<string>();
+
+            if (integer.Length > MAX_SUPPORTED_DIGITS)
+            {
+                throw new UnsupportedNumberOfDigitsException("Program does not"
+                    + " support numbers larger than 999 Septillion");
+            }
+
+            // Starting from the end on the string and working backwards,
+            // Add every three digits to the stack.
+            for (int i = integer.Length - 3; i > -3; i -= 3)
+            {
+                int periodSize = 3;
+                int startIndex = i;
+                int paddedZeroes = 0;
+                string padding = "";
+
+                // If index is less than zero, final period
+                // must be less than three digits, so pad it.
+                if (i < 0)
+                {
+                    periodSize = 3 + i;
+                    startIndex = 0;
+                    paddedZeroes = Math.Abs(i);
+                }
+
+                for (int paddedZero = 0; paddedZero < paddedZeroes; paddedZero++)
+                {
+                    padding += '0';
+                }
+
+                periods.Push(padding + integer.Substring(startIndex, periodSize));
+            }
+
+            return periods;
+        }
+
+        // Takes a stack of periods and converts them into words.
+        private static List<string> convertPeriodsIntoWords(Stack<string> periods)
         {
             List<string> words = new List<string>();
-            int digits = integer.Length;
 
-            // Reverse integer string so that digit indexes are consistent.
-            // eg. Ones will always be index 0, tens will always be index 1 etc.
-            string reversedInteger = reverseString(integer);
-
-            if (digits > MAX_SUPPORTED_DIGITS)
+            while (periods.Count != 0)
             {
-                throw new UnsupportedNumberOfDigitsException("This class currently"
-                    + " only supports numbers up to 999.99");
-            }
+                int currentPeriod = periods.Count;
+                List<string> periodInWords = convertPeriodIntoWords(periods.Pop());
+                words.AddRange(periodInWords);
 
-            if (isSignificantDigit(reversedInteger, HUNDREDS_COLUMN))
-            {
-                char hundredsDigit = reversedInteger[HUNDREDS_COLUMN];
-                words.Add(ONES_MAP[hundredsDigit]);
-                words.Add("HUNDRED");
-
-                if (!isLastSignificantDigit(reversedInteger, HUNDREDS_COLUMN))
+                // Unless we are on the last period, add
+                // the period name. eg. THOUSAND
+                // Don't add the name if current period is empty.
+                if (currentPeriod > 1 && periodInWords.Count > 0)
                 {
-                    words.Add("AND");
+                    words.Add(PERIOD_MAP[currentPeriod]);
                 }
-            }
-
-            if (isSignificantDigit(reversedInteger, TENS_COLUMN))
-            {
-                char tensDigit = reversedInteger[TENS_COLUMN];
-                char onesDigit = reversedInteger[ONES_COLUMN];
-                if (tensDigit == '1')
-                {
-                    words.Add(TEENS_MAP[onesDigit]);
-                }
-                else
-                {
-                    words.Add(TENS_MAP[tensDigit] + '-' + ONES_MAP[onesDigit]);
-                }
-            }
-            else if (isSignificantDigit(reversedInteger, ONES_COLUMN))
-            {
-                char onesDigit = reversedInteger[ONES_COLUMN];
-                words.Add(ONES_MAP[onesDigit]);
             }
 
             if (words.Count == 0)
@@ -147,35 +198,65 @@ namespace numbersToWordsApp
                 words.Add("ZERO");
             }
 
-            string integerInWords = string.Join(" ", words);
-            return integerInWords;
+            return words;
         }
 
-        // Checks to see if the specified column (index in string) exists
-        // in the provided string.
-        private static bool columnExists(string integer, int column)
+        // Takes a period as a string and converts it into words.
+        // Expects period to be 3 digits.
+        private static List<string> convertPeriodIntoWords(string period)
         {
-            if (column < integer.Length)
+            List<string> words = new List<string>();
+            char hundredsDigit = period[0];
+            char tensDigit = period[1];
+            char onesDigit = period[2];
+
+            // Hundreds Column
+            if (isSignificantDigit(hundredsDigit))
             {
-                return true;
+                words.Add(ONES_MAP[hundredsDigit]);
+                words.Add("HUNDRED");
+
+                if (!isLastSignificantDigit(period, 0))
+                {
+                    words.Add("AND");
+                }
             }
-            else
+
+            // Tens and Ones Column
+            if (isSignificantDigit(tensDigit))
+            {
+                if (tensDigit == '1')
+                {
+                    words.Add(TEENS_MAP[onesDigit]);
+                }
+                else if (isSignificantDigit(onesDigit))
+                {
+                    words.Add(TENS_MAP[tensDigit] + '-' + ONES_MAP[onesDigit]);
+                }
+                else
+                {
+                    words.Add(TENS_MAP[tensDigit]);
+                }
+            }
+            else if (isSignificantDigit(onesDigit))
+            {
+                words.Add(ONES_MAP[onesDigit]);
+            }
+
+            return words;
+        }
+
+        // Checks to see if a digit is significant or not.
+        // 0 is an insignificant digit.
+        private static bool isSignificantDigit(char digit)
+        {
+            if (digit == '0')
             {
                 return false;
             }
-        }
-
-        // Checks to see if the digit at the specified column (index in string) is
-        // significant. eg. 0 is insignificant.
-        private static bool isSignificantDigit(string integer, int column)
-        {
-            if (columnExists(integer, column) && integer[column] != '0')
-            {
-                return true;
-            }
             else
             {
-                return false;
+                return true;
             }
         }
 
@@ -183,25 +264,16 @@ namespace numbersToWordsApp
         // the last significant digit in the integer.
         // eg. the '1' in '100' is the last significant digit becasue the remaining
         // digits are all zeroes.
-        // This method relies on being passed a reversed integer string because it
-        // makes things easier in the context the method is used.
-        private static bool isLastSignificantDigit(string reversedInteger, int column)
+        private static bool isLastSignificantDigit(string integer, int column)
         {
-            for (int columnToCheck = column - 1; columnToCheck >= 0; columnToCheck--)
+            for (int columnToCheck = column + 1; columnToCheck < integer.Length; columnToCheck++)
             {
-                if (isSignificantDigit(reversedInteger, columnToCheck))
+                if (isSignificantDigit(integer[columnToCheck]))
                 {
                     return false;
                 }
             }
             return true;
-        }
-
-        private static string reverseString(string input)
-        {
-            char[] inputArray = input.ToCharArray();
-            Array.Reverse(inputArray);
-            return new string(inputArray);
         }
 
     }

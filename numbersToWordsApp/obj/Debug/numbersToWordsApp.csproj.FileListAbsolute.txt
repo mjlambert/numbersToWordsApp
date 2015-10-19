@@ -15,6 +15,5 @@ C:\Users\Matt\Documents\Visual Studio 2015\Projects\numbersToWordsApp\numbersToW
 C:\Users\Matt\Documents\Visual Studio 2015\Projects\numbersToWordsApp\numbersToWordsApp\bin\numbersToWordsApp.pdb
 C:\Users\Matt\Documents\Visual Studio 2015\Projects\numbersToWordsApp\numbersToWordsApp\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
 C:\Users\Matt\Documents\Visual Studio 2015\Projects\numbersToWordsApp\numbersToWordsApp\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-C:\Users\Matt\Documents\Visual Studio 2015\Projects\numbersToWordsApp\numbersToWordsApp\obj\Debug\numbersToWordsApp.csprojResolveAssemblyReference.cache
 C:\Users\Matt\Documents\Visual Studio 2015\Projects\numbersToWordsApp\numbersToWordsApp\obj\Debug\numbersToWordsApp.dll
 C:\Users\Matt\Documents\Visual Studio 2015\Projects\numbersToWordsApp\numbersToWordsApp\obj\Debug\numbersToWordsApp.pdb

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace numbersToWordsApp
 {
@@ -11,9 +12,13 @@ namespace numbersToWordsApp
 
         protected void submitNumber_Click(object sender, EventArgs e)
         {
+            // Strip out invalid characters.
+            string numberAsString = Regex.Replace(numberInput.Text, @"[^\d\.,+-]", "");
+            numberInput.Text = numberAsString;
+
             try
             {
-                numberInWords.Text = NumberFormatter.convertNumberToWords(Convert.ToDecimal(numberInput.Text));
+                numberInWords.Text = NumberToWordsFormatter.convertNumberToWords(Convert.ToDecimal(numberAsString));
             }
             catch (FormatException exception)
             {

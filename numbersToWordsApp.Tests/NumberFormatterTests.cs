@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace numbersToWordsApp.Tests
 {
     [TestClass]
-    public class NumberFormatterTests
+    public class NumberToWordsFormatterTests
     {
 
         [TestMethod]
@@ -18,11 +18,15 @@ namespace numbersToWordsApp.Tests
                 { 57m, "FIFTY-SEVEN DOLLARS AND ZERO CENTS" },
                 { 0m, "ZERO DOLLARS AND ZERO CENTS" },
                 { 101.99m, "ONE HUNDRED AND ONE DOLLARS AND NINETY-NINE CENTS" },
+                { 10120.00m, "TEN THOUSAND ONE HUNDRED AND TWENTY DOLLARS AND ZERO CENTS" },
+                { 1000000000.01m, "ONE BILLION DOLLARS AND ONE CENT" },
+                { 1.00m, "ONE DOLLAR AND ZERO CENTS" },
+                { 45686346.18m, "FORTY-FIVE MILLION SIX HUNDRED AND EIGHTY-SIX THOUSAND THREE HUNDRED AND FORTY-SIX DOLLARS AND EIGHTEEN CENTS" },
             };
 
             foreach (KeyValuePair<decimal, string> testCase in testCases)
             {
-                string actualNumberInWords = NumberFormatter.convertNumberToWords(testCase.Key);
+                string actualNumberInWords = NumberToWordsFormatter.convertNumberToWords(testCase.Key);
                 string expectedNumberInWords = testCase.Value;
                 Assert.AreEqual(
                     expectedNumberInWords,
@@ -36,7 +40,7 @@ namespace numbersToWordsApp.Tests
         {
             try
             {
-                NumberFormatter.convertNumberToWords(123456789.456m);
+                NumberToWordsFormatter.convertNumberToWords(3758593957635465787364567493m);
             }
             catch(Exception exception)
             {
